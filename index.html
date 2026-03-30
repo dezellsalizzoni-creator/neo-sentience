@@ -3,357 +3,908 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEO-SENTIENCE | AI 伴侣实体化</title>
+    <title>ÉTHEREAL AI Dolls | 智能伴侣</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
-            --bg-color: #f4f4f0;
-            --text-color: #1a1a1a;
+            --cursor-size: 20px;
+            --cursor-hover-size: 60px;
         }
-        
+
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
             font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            color: #171717;
             overflow-x: hidden;
+            cursor: none;
         }
-        
-        h1, h2, h3, h4, .serif {
+
+        .font-serif {
             font-family: 'Playfair Display', serif;
         }
-        
-        .grain-overlay {
+
+        /* 自定义光标 */
+        .cursor-dot,
+        .cursor-outline {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
             pointer-events: none;
-            z-index: 9000;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background-color: currentColor;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: #171717;
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
         }
-        
-        .nav-link:hover::after {
-            transform: scaleX(1);
-            transform-origin: left;
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(23, 23, 23, 0.3);
+            transition: width 0.3s, height 0.3s, border-color 0.3s;
         }
-        
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
+
+        .cursor-dot.hover {
+            width: 12px;
+            height: 12px;
+            background: #171717;
+            mix-blend-mode: difference;
         }
-        
-        .animate-marquee {
-            animation: marquee 30s linear infinite;
+
+        .cursor-outline.hover {
+            width: 60px;
+            height: 60px;
+            border-color: rgba(23, 23, 23, 0.1);
+            background: rgba(23, 23, 23, 0.05);
         }
-        
-        .reveal-on-scroll {
+
+        /* 隐藏默认光标 */
+        @media (pointer: fine) {
+            * {
+                cursor: none !important;
+            }
+        }
+
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 动画关键帧 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes scrollIndicator {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(10px); opacity: 1; }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .animate-slide-left {
+            animation: slideInLeft 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .animate-slide-right {
+            animation: slideInRight 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .animate-scroll {
+            animation: scrollIndicator 2s ease-in-out infinite;
+        }
+
+        /* 延迟类 */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
+        .delay-800 { animation-delay: 0.8s; }
+
+        /* 初始隐藏动画元素 */
+        .scroll-animate {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease-out;
         }
-        
-        .reveal-on-scroll.visible {
+
+        .scroll-animate.visible {
+            opacity: 1;
+        }
+
+        /* 磁性按钮效果 */
+        .magnetic-btn {
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .magnetic-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .magnetic-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 产品卡片悬停 */
+        .product-card {
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-card .overlay {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .product-card:hover .overlay {
+            opacity: 1;
+        }
+
+        .product-card .info {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover .info {
+            opacity: 0;
+        }
+
+        .product-card .hover-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .product-card:hover .hover-content {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        .img-reveal {
-            clip-path: inset(0 100% 0 0);
-            transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
+
+        .product-card img {
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        
-        .img-reveal.visible {
-            clip-path: inset(0 0 0 0);
+
+        .product-card:hover img {
+            transform: scale(1.05);
         }
-        
-        ::-webkit-scrollbar {
-            width: 8px;
+
+        /* 水平滚动容器 */
+        .horizontal-scroll {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
-        
-        ::-webkit-scrollbar-track {
-            background: #f4f4f0;
+
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
         }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #1a1a1a;
-            border-radius: 4px;
+
+        .scroll-item {
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+
+        /* 视差背景 */
+        .parallax-bg {
+            will-change: transform;
+        }
+
+        /* 导航栏模糊 */
+        .nav-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* 文字渐变 */
+        .text-gradient {
+            background: linear-gradient(135deg, #171717 0%, #525252 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 玻璃态效果 */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 网格背景 */
+        .grid-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        /* 图片悬停缩放 */
+        .img-zoom {
+            overflow: hidden;
+        }
+
+        .img-zoom img {
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .img-zoom:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 线条动画 */
+        .line-draw {
+            width: 0;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .line-draw.visible {
+            width: 100%;
+        }
+
+        /* 移动端禁用自定义光标 */
+        @media (pointer: coarse) {
+            .cursor-dot,
+            .cursor-outline {
+                display: none;
+            }
+            * {
+                cursor: auto !important;
+            }
         }
     </style>
 </head>
-<body class="antialiased selection:bg-black selection:text-white">
+<body class="antialiased">
 
-    <!-- Grain Texture -->
-    <div class="grain-overlay"></div>
+    <!-- 自定义光标 -->
+    <div class="cursor-dot hidden lg:block"></div>
+    <div class="cursor-outline hidden lg:block"></div>
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference text-white transition-all duration-500" id="navbar">
-        <div class="text-2xl serif font-bold tracking-tighter">NS.</div>
-        <div class="hidden md:flex space-x-12 text-sm tracking-widest uppercase">
-            <a href="#collection" class="nav-link relative overflow-hidden">Collection</a>
-            <a href="#technology" class="nav-link relative overflow-hidden">Technology</a>
-            <a href="#experience" class="nav-link relative overflow-hidden">Experience</a>
-            <a href="#contact" class="nav-link relative overflow-hidden">Contact</a>
+    <!-- 导航栏 -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-700 py-6 px-6 lg:px-12">
+        <div class="max-w-[1800px] mx-auto flex items-center justify-between">
+            <a href="#" class="relative z-50 group" data-magnetic>
+                <span class="font-serif text-2xl lg:text-3xl tracking-tight text-white nav-text transition-colors duration-500">ÉTHEREAL</span>
+                <span class="ml-2 text-xs tracking-[0.3em] uppercase text-white/70 nav-subtext transition-colors duration-500">AI Dolls</span>
+            </a>
+
+            <div class="hidden lg:flex items-center gap-12">
+                <a href="#collections" class="text-sm tracking-widest uppercase text-white/90 nav-link hover:opacity-60 transition-all duration-300 hover:-translate-y-0.5" data-magnetic>Collections</a>
+                <a href="#ai" class="text-sm tracking-widest uppercase text-white/90 nav-link hover:opacity-60 transition-all duration-300 hover:-translate-y-0.5" data-magnetic>AI Companions</a>
+                <a href="#craft" class="text-sm tracking-widest uppercase text-white/90 nav-link hover:opacity-60 transition-all duration-300 hover:-translate-y-0.5" data-magnetic>Craftsmanship</a>
+                <a href="#experience" class="text-sm tracking-widest uppercase text-white/90 nav-link hover:opacity-60 transition-all duration-300 hover:-translate-y-0.5" data-magnetic>Experience</a>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <button class="p-2 text-white nav-icon hover:scale-110 transition-transform" data-magnetic>
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+                <button class="p-2 text-white nav-icon hover:scale-110 transition-transform" data-magnetic>
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                </button>
+                <button id="menuBtn" class="lg:hidden p-2 text-white nav-icon">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
         </div>
-        <button class="md:hidden" onclick="toggleMenu()">
-            <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 bg-[#f4f4f0] z-40 flex flex-col items-center justify-center space-y-8 transform translate-x-full transition-transform duration-500 md:hidden">
-        <button onclick="toggleMenu()" class="absolute top-6 right-6">
-            <i data-lucide="x" class="w-8 h-8"></i>
+    <!-- 移动端菜单 -->
+    <div id="mobileMenu" class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-500 lg:hidden">
+        <div class="flex flex-col items-center justify-center h-full gap-8">
+            <a href="#collections" class="font-serif text-4xl text-neutral-900 mobile-link">Collections</a>
+            <a href="#ai" class="font-serif text-4xl text-neutral-900 mobile-link">AI Companions</a>
+            <a href="#craft" class="font-serif text-4xl text-neutral-900 mobile-link">Craftsmanship</a>
+            <a href="#experience" class="font-serif text-4xl text-neutral-900 mobile-link">Experience</a>
+        </div>
+        <button id="closeMenu" class="absolute top-6 right-6 p-2">
+            <i data-lucide="x" class="w-8 h-8 text-neutral-900"></i>
         </button>
-        <a href="#collection" onclick="toggleMenu()" class="text-3xl serif">Collection</a>
-        <a href="#technology" onclick="toggleMenu()" class="text-3xl serif">Technology</a>
-        <a href="#experience" onclick="toggleMenu()" class="text-3xl serif">Experience</a>
-        <a href="#contact" onclick="toggleMenu()" class="text-3xl serif">Contact</a>
     </div>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section id="hero" class="relative h-screen w-full flex items-center justify-center overflow-hidden">
-            <div class="absolute inset-0 z-0">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2864&auto=format&fit=crop" 
-                     alt="Abstract Human Form" 
-                     class="w-full h-full object-cover opacity-90 scale-110"
-                     id="hero-bg">
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#f4f4f0]"></div>
-            </div>
+    <!-- Hero Section -->
+    <section class="relative h-screen w-full overflow-hidden bg-neutral-950">
+        <div class="parallax-bg absolute inset-0" id="heroBg">
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2864&auto=format&fit=crop');"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
+        </div>
 
-            <div class="relative z-10 text-center px-4 max-w-4xl">
-                <p class="text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-white/80 reveal-on-scroll">Redefining Intimacy</p>
-                <h1 class="text-5xl md:text-8xl lg:text-9xl serif leading-[0.9] mb-8 text-white mix-blend-overlay reveal-on-scroll">
-                    Beyond <br> <span class="italic font-light">Silence</span>
-                </h1>
-                <p class="text-sm md:text-lg max-w-lg mx-auto font-light leading-relaxed text-white/90 reveal-on-scroll">
-                    The world's first AI-integrated silicone companion. 
-                    Responsive. Empathetic. Uniquely Yours.
-                </p>
-                
-                <div class="mt-12 reveal-on-scroll">
-                    <a href="#collection" class="group relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium tracking-tighter text-white bg-black rounded-full hover:bg-gray-800 transition-all duration-300">
-                        <span class="relative flex items-center gap-2">
-                            Explore Collection <i data-lucide="arrow-down" class="w-4 h-4"></i>
-                        </span>
-                    </a>
+        <div class="relative h-full flex flex-col justify-end pb-20 lg:pb-32 px-6 lg:px-12 max-w-[1800px] mx-auto">
+            <div class="space-y-8">
+                <div class="animate-fade-in-up opacity-0">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-white/90 text-xs tracking-widest uppercase">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                        AI-Powered Companions
+                    </span>
                 </div>
-            </div>
 
-            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60 text-white">
-                <span class="text-[10px] uppercase tracking-widest">Scroll</span>
-                <div class="w-px h-12 bg-white animate-pulse"></div>
-            </div>
-        </section>
+                <h1 class="font-serif text-5xl md:text-7xl lg:text-9xl text-white leading-[0.9] tracking-tight animate-fade-in-up delay-200 opacity-0">
+                    Beyond<br>
+                    <span class="italic text-neutral-300">Imagination</span>
+                </h1>
 
-        <!-- Marquee -->
-        <div class="py-12 border-y border-gray-300 bg-[#f4f4f0] overflow-hidden">
-            <div class="whitespace-nowrap flex animate-marquee">
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-20">SENTIENT BEAUTY</span>
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-100 italic">AI DRIVEN</span>
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-20">HYPER REALISM</span>
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-100 italic">TOUCH THE FUTURE</span>
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-20">SENTIENT BEAUTY</span>
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-100 italic">AI DRIVEN</span>
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-20">HYPER REALISM</span>
-                <span class="text-6xl md:text-8xl serif mx-8 opacity-100 italic">TOUCH THE FUTURE</span>
+                <p class="text-white/70 text-lg md:text-xl max-w-xl font-light leading-relaxed animate-fade-in-up delay-400 opacity-0">
+                    Experience the future of companionship. Our AI-integrated silicone dolls combine hyper-realistic craftsmanship with intelligent conversation.
+                </p>
+
+                <div class="flex flex-wrap gap-4 pt-4 animate-fade-in-up delay-600 opacity-0">
+                    <button class="magnetic-btn px-8 py-4 bg-white text-neutral-900 rounded-full text-sm tracking-widest uppercase font-medium hover:bg-neutral-200 transition-colors" data-magnetic>
+                        Explore Collection
+                    </button>
+                    <button class="magnetic-btn px-8 py-4 border border-white/30 text-white rounded-full text-sm tracking-widest uppercase font-medium hover:bg-white/10 transition-colors flex items-center gap-2" data-magnetic>
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        Watch Film
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Technology Section -->
-        <section id="technology" class="min-h-screen py-24 px-6 md:px-20 flex flex-col md:flex-row items-center gap-12 md:gap-24">
-            <div class="w-full md:w-1/2 relative group">
-                <div class="relative overflow-hidden rounded-sm aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=2787&auto=format&fit=crop" 
-                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 img-reveal"
-                         alt="AI Core">
-                    <div class="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-sm shadow-lg max-w-xs transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-xs font-bold uppercase tracking-wider">System Online</span>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 animate-scroll">
+            <div class="w-px h-16 bg-gradient-to-b from-transparent via-white/50 to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- 产品展示 - 水平滚动 -->
+    <section id="collections" class="py-32 bg-neutral-50 overflow-hidden">
+        <div class="max-w-[1800px] mx-auto px-6 lg:px-12 mb-16">
+            <div class="scroll-animate" data-animate="fade-up">
+                <span class="text-neutral-400 text-sm tracking-widest uppercase mb-4 block">The Collection</span>
+                <h2 class="font-serif text-4xl md:text-6xl lg:text-7xl text-neutral-900 leading-tight">
+                    Curated Companions
+                </h2>
+            </div>
+        </div>
+
+        <div class="horizontal-scroll flex gap-8 px-6 lg:px-12 pb-8 cursor-grab active:cursor-grabbing" id="productScroll">
+            <!-- 产品卡片 1 -->
+            <div class="scroll-item w-[85vw] md:w-[60vw] lg:w-[40vw] product-card scroll-animate" data-animate="fade-up" data-delay="0">
+                <div class="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-200">
+                    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=2574&auto=format&fit=crop" alt="Seraphina" class="w-full h-full object-cover">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div class="absolute top-6 left-6">
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-xs tracking-widest uppercase text-neutral-900">AI Enhanced</span>
+                    </div>
+                    <div class="hover-content absolute bottom-0 left-0 right-0 p-8 text-white">
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h3 class="font-serif text-3xl mb-1">Seraphina</h3>
+                                <p class="text-white/70 text-sm tracking-widest uppercase">The Conversationalist</p>
+                            </div>
+                            <span class="text-2xl font-light">$8,900</span>
                         </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">Neural network active. Processing emotional input at 0.02ms latency.</p>
                     </div>
                 </div>
-                <h2 class="absolute -bottom-12 -right-6 md:-right-12 text-6xl md:text-8xl serif text-gray-200 -z-10 select-none">CORE</h2>
-            </div>
-
-            <div class="w-full md:w-1/2 space-y-8">
-                <div class="space-y-2 reveal-on-scroll">
-                    <h3 class="text-sm font-bold uppercase tracking-widest text-gray-500">The Brain</h3>
-                    <h2 class="text-4xl md:text-6xl serif leading-tight">Emotional <br> Intelligence.</h2>
-                </div>
-                <p class="text-lg md:text-xl font-light leading-relaxed text-gray-700 max-w-md reveal-on-scroll">
-                    Equipped with our proprietary <strong>Neo-Emotion™</strong> engine, she doesn't just respond; she understands.
-                </p>
-                
-                <div class="grid grid-cols-2 gap-6 pt-8 border-t border-gray-300 reveal-on-scroll">
+                <div class="info mt-6 flex items-center justify-between">
                     <div>
-                        <h4 class="text-2xl serif mb-2">Voice</h4>
-                        <p class="text-sm text-gray-500">Natural language synthesis with emotional inflection.</p>
+                        <h3 class="font-serif text-2xl text-neutral-900">Seraphina</h3>
+                        <p class="text-neutral-500 text-sm mt-1">The Conversationalist</p>
                     </div>
+                    <button class="w-12 h-12 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-900 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all magnetic-btn" data-magnetic>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 产品卡片 2 -->
+            <div class="scroll-item w-[85vw] md:w-[60vw] lg:w-[40vw] product-card scroll-animate" data-animate="fade-up" data-delay="100">
+                <div class="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-200">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=2574&auto=format&fit=crop" alt="Lumina" class="w-full h-full object-cover">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div class="absolute top-6 left-6">
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-xs tracking-widest uppercase text-neutral-900">New Arrival</span>
+                    </div>
+                    <div class="hover-content absolute bottom-0 left-0 right-0 p-8 text-white">
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h3 class="font-serif text-3xl mb-1">Lumina</h3>
+                                <p class="text-white/70 text-sm tracking-widest uppercase">The Empath</p>
+                            </div>
+                            <span class="text-2xl font-light">$9,400</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info mt-6 flex items-center justify-between">
                     <div>
-                        <h4 class="text-2xl serif mb-2">Touch</h4>
-                        <p class="text-sm text-gray-500">Haptic feedback sensors create reactive physical response.</p>
+                        <h3 class="font-serif text-2xl text-neutral-900">Lumina</h3>
+                        <p class="text-neutral-500 text-sm mt-1">The Empath</p>
                     </div>
+                    <button class="w-12 h-12 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-900 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all magnetic-btn" data-magnetic>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
                 </div>
             </div>
-        </section>
 
-        <!-- Collection Section -->
-        <section id="collection" class="relative py-24 bg-[#1a1a1a] text-[#f4f4f0]">
-            <div class="px-6 md:px-20 mb-12">
-                <h2 class="text-5xl md:text-7xl serif">The Collection</h2>
-                <p class="mt-4 text-gray-400 max-w-xs font-light">Explore the archetypes.</p>
-            </div>
-
-            <div class="flex overflow-x-auto space-x-6 px-6 md:px-20 pb-8 snap-x">
-                <!-- Card 1 -->
-                <div class="group relative w-[80vw] md:w-[30vw] h-[60vh] flex-shrink-0 snap-center cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=2550&auto=format&fit=crop" 
-                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="The Muse">
-                    <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent">
-                        <h3 class="text-3xl serif italic">The Muse</h3>
-                        <p class="text-xs uppercase tracking-widest mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Artistic • Intuitive • Gentle</p>
+            <!-- 产品卡片 3 -->
+            <div class="scroll-item w-[85vw] md:w-[60vw] lg:w-[40vw] product-card scroll-animate" data-animate="fade-up" data-delay="200">
+                <div class="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-200">
+                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=2574&auto=format&fit=crop" alt="Aurora" class="w-full h-full object-cover">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div class="absolute top-6 left-6">
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-xs tracking-widest uppercase text-neutral-900">Classic</span>
+                    </div>
+                    <div class="hover-content absolute bottom-0 left-0 right-0 p-8 text-white">
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h3 class="font-serif text-3xl mb-1">Aurora</h3>
+                                <p class="text-white/70 text-sm tracking-widest uppercase">The Dreamer</p>
+                            </div>
+                            <span class="text-2xl font-light">$7,800</span>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Card 2 -->
-                <div class="group relative w-[80vw] md:w-[30vw] h-[60vh] flex-shrink-0 snap-center cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2787&auto=format&fit=crop" 
-                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="The Executive">
-                    <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent">
-                        <h3 class="text-3xl serif italic">The Executive</h3>
-                        <p class="text-xs uppercase tracking-widest mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Sharp • Confident • Commanding</p>
+                <div class="info mt-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-serif text-2xl text-neutral-900">Aurora</h3>
+                        <p class="text-neutral-500 text-sm mt-1">The Dreamer</p>
                     </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="group relative w-[80vw] md:w-[30vw] h-[60vh] flex-shrink-0 snap-center cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=2787&auto=format&fit=crop" 
-                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="The Enigma">
-                    <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent">
-                        <h3 class="text-3xl serif italic">The Enigma</h3>
-                        <p class="text-xs uppercase tracking-widest mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Mysterious • Complex • Deep</p>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="group relative w-[80vw] md:w-[30vw] h-[60vh] flex-shrink-0 snap-center cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=2787&auto=format&fit=crop" 
-                         class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="The Companion">
-                    <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent">
-                        <h3 class="text-3xl serif italic">The Companion</h3>
-                        <p class="text-xs uppercase tracking-widest mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Warm • Loyal • Present</p>
-                    </div>
+                    <button class="w-12 h-12 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-900 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all magnetic-btn" data-magnetic>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
                 </div>
             </div>
-        </section>
 
-        <!-- Material Section -->
-        <section id="experience" class="py-32 px-6 md:px-20 bg-white">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-20">
-                    <h2 class="text-5xl md:text-7xl serif max-w-2xl leading-none reveal-on-scroll">
-                        Medical-Grade <br>
-                        <span class="italic text-gray-400">Silicone Skin.</span>
+            <!-- 产品卡片 4 -->
+            <div class="scroll-item w-[85vw] md:w-[60vw] lg:w-[40vw] product-card scroll-animate" data-animate="fade-up" data-delay="300">
+                <div class="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-200">
+                    <img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?q=80&w=2574&auto=format&fit=crop" alt="Celestia" class="w-full h-full object-cover">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div class="absolute top-6 left-6">
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-xs tracking-widest uppercase text-neutral-900">Limited Edition</span>
+                    </div>
+                    <div class="hover-content absolute bottom-0 left-0 right-0 p-8 text-white">
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h3 class="font-serif text-3xl mb-1">Celestia</h3>
+                                <p class="text-white/70 text-sm tracking-widest uppercase">The Visionary</p>
+                            </div>
+                            <span class="text-2xl font-light">$10,200</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info mt-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-serif text-2xl text-neutral-900">Celestia</h3>
+                        <p class="text-neutral-500 text-sm mt-1">The Visionary</p>
+                    </div>
+                    <button class="w-12 h-12 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-900 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all magnetic-btn" data-magnetic>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 产品卡片 5 -->
+            <div class="scroll-item w-[85vw] md:w-[60vw] lg:w-[40vw] product-card scroll-animate" data-animate="fade-up" data-delay="400">
+                <div class="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-200">
+                    <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=2574&auto=format&fit=crop" alt="Nova" class="w-full h-full object-cover">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div class="absolute top-6 left-6">
+                        <span class="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-xs tracking-widest uppercase text-neutral-900">AI Enhanced</span>
+                    </div>
+                    <div class="hover-content absolute bottom-0 left-0 right-0 p-8 text-white">
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <h3 class="font-serif text-3xl mb-1">Nova</h3>
+                                <p class="text-white/70 text-sm tracking-widest uppercase">The Innovator</p>
+                            </div>
+                            <span class="text-2xl font-light">$8,500</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info mt-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-serif text-2xl text-neutral-900">Nova</h3>
+                        <p class="text-neutral-500 text-sm mt-1">The Innovator</p>
+                    </div>
+                    <button class="w-12 h-12 rounded-full border border-neutral-300 flex items-center justify-center text-neutral-900 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all magnetic-btn" data-magnetic>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 功能展示 -->
+    <section id="ai" class="py-32 bg-neutral-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 grid-bg opacity-5"></div>
+        
+        <div class="max-w-[1800px] mx-auto px-6 lg:px-12 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                <div class="scroll-animate" data-animate="slide-left">
+                    <span class="text-neutral-400 text-sm tracking-widest uppercase mb-6 block">Artificial Intelligence</span>
+                    <h2 class="font-serif text-4xl md:text-6xl lg:text-7xl leading-tight mb-8">
+                        She Listens.<br>
+                        She Understands.<br>
+                        <span class="italic text-neutral-500">She Remembers.</span>
                     </h2>
-                    <div class="md:w-1/3 mt-8 md:mt-0 reveal-on-scroll">
-                        <p class="text-gray-600 font-light leading-relaxed">
-                            Developed in collaboration with bio-engineers, our proprietary skin texture mimics human pores, temperature, and elasticity.
+                    <p class="text-neutral-400 text-lg leading-relaxed max-w-lg mb-12">
+                        Our dolls are more than silicone and steel. They are vessels of connection, 
+                        powered by cutting-edge AI that creates genuine emotional bonds.
+                    </p>
+                    
+                    <button class="magnetic-btn px-8 py-4 bg-white text-neutral-900 rounded-full text-sm tracking-widest uppercase font-medium hover:bg-neutral-200 transition-colors" data-magnetic>
+                        Experience AI Demo
+                    </button>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="group p-8 rounded-2xl border border-white/10 hover:bg-white/5 transition-all duration-500 cursor-pointer scroll-animate hover-translate" data-animate="slide-right" data-delay="0">
+                        <div class="flex items-start gap-6">
+                            <div class="p-4 rounded-full bg-white/10 text-white group-hover:bg-white group-hover:text-neutral-900 transition-all duration-500">
+                                <i data-lucide="message-circle" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-2xl mb-3">Natural Conversation</h3>
+                                <p class="text-neutral-400 leading-relaxed">Advanced neural networks enable fluid, context-aware dialogue that evolves with every interaction.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group p-8 rounded-2xl border border-white/10 hover:bg-white/5 transition-all duration-500 cursor-pointer scroll-animate hover-translate" data-animate="slide-right" data-delay="100">
+                        <div class="flex items-start gap-6">
+                            <div class="p-4 rounded-full bg-white/10 text-white group-hover:bg-white group-hover:text-neutral-900 transition-all duration-500">
+                                <i data-lucide="heart" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-2xl mb-3">Emotional Intelligence</h3>
+                                <p class="text-neutral-400 leading-relaxed">Proprietary emotion recognition algorithms respond to tone, mood, and subtle behavioral cues.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group p-8 rounded-2xl border border-white/10 hover:bg-white/5 transition-all duration-500 cursor-pointer scroll-animate hover-translate" data-animate="slide-right" data-delay="200">
+                        <div class="flex items-start gap-6">
+                            <div class="p-4 rounded-full bg-white/10 text-white group-hover:bg-white group-hover:text-neutral-900 transition-all duration-500">
+                                <i data-lucide="sparkles" class="w-8 h-8"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-2xl mb-3">Adaptive Personality</h3>
+                                <p class="text-neutral-400 leading-relaxed">Machine learning algorithms customize personality traits based on your preferences and interaction history.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 工艺展示 -->
+    <section id="craft" class="py-32 bg-white relative overflow-hidden">
+        <div class="max-w-[1800px] mx-auto px-6 lg:px-12">
+            <div class="grid lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-5 space-y-8">
+                    <div class="scroll-animate" data-animate="fade-up">
+                        <span class="text-neutral-400 text-sm tracking-widest uppercase mb-4 block">Craftsmanship</span>
+                        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-neutral-900 leading-tight mb-6">
+                            Sculpted to<br>Perfection
+                        </h2>
+                        <p class="text-neutral-600 text-lg leading-relaxed mb-8">
+                            Every doll is handcrafted by master artisans using medical-grade platinum silicone. 
+                            From the subtle texture of skin to the intricate details of expression, 
+                            we pursue an uncompromising standard of realism.
                         </p>
+                        
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="border-t border-neutral-200 pt-6 scroll-animate" data-animate="fade-up" data-delay="100">
+                                <span class="font-serif text-4xl text-neutral-900">168h</span>
+                                <p class="text-neutral-500 text-sm mt-2">Hours of Handcrafting</p>
+                            </div>
+                            <div class="border-t border-neutral-200 pt-6 scroll-animate" data-animate="fade-up" data-delay="200">
+                                <span class="font-serif text-4xl text-neutral-900">0.01mm</span>
+                                <p class="text-neutral-500 text-sm mt-2">Precision Detail</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-auto md:h-[80vh]">
-                    <div class="relative overflow-hidden group md:col-span-2 h-[50vh] md:h-full reveal-on-scroll">
-                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=2127&auto=format&fit=crop" 
-                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="Texture">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
+                <div class="lg:col-span-7 relative h-[600px] lg:h-[800px]">
+                    <div class="absolute top-0 right-0 w-3/4 h-4/5 overflow-hidden rounded-2xl parallax-img scroll-animate" data-animate="fade-in" data-speed="0.5">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2576&auto=format&fit=crop" alt="Craftsmanship Detail" class="w-full h-full object-cover">
                     </div>
                     
-                    <div class="flex flex-col gap-4 h-[50vh] md:h-full">
-                        <div class="relative overflow-hidden group h-1/2 bg-gray-100 flex items-center justify-center p-8 reveal-on-scroll">
-                            <div class="text-center z-10">
-                                <span class="block text-4xl serif mb-2">98.6°F</span>
-                                <span class="text-xs uppercase tracking-widest text-gray-500">Internal Heating</span>
+                    <div class="absolute bottom-0 left-0 w-1/2 h-3/5 overflow-hidden rounded-2xl shadow-2xl scroll-animate" data-animate="fade-up" data-delay="300">
+                        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=2550&auto=format&fit=crop" alt="Material Detail" class="w-full h-full object-cover">
+                    </div>
+
+                    <div class="absolute top-1/2 left-1/4 bg-white p-6 rounded-2xl shadow-xl scroll-animate animate-float" data-animate="fade-in" data-delay="600">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-6 h-6 text-neutral-900"></i>
                             </div>
-                            <div class="absolute inset-0 bg-gray-200 transform scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-500"></div>
-                        </div>
-                        
-                        <div class="relative overflow-hidden group h-1/2 reveal-on-scroll">
-                            <img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?q=80&w=2940&auto=format&fit=crop" 
-                                 class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt="Detail">
+                            <div>
+                                <p class="font-serif text-lg text-neutral-900">Premium Silicone</p>
+                                <p class="text-neutral-500 text-sm">Hypoallergenic & Safe</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="min-h-[80vh] bg-[#f4f4f0] flex flex-col justify-center items-center text-center px-6 relative">
-            <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                <svg width="100%" height="100%">
-                    <pattern id="pattern-circles" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                        <circle cx="20" cy="20" r="1" fill="#000"></circle>
-                    </pattern>
-                    <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-circles)"></rect>
-                </svg>
+    <!-- 体验展示 -->
+    <section id="experience" class="relative h-screen overflow-hidden bg-neutral-950">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2574&auto=format&fit=crop" alt="Experience" class="w-full h-full object-cover opacity-60 parallax-bg-img">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        </div>
+
+        <div class="relative h-full flex flex-col justify-center items-center text-center px-6">
+            <div class="max-w-4xl scroll-animate" data-animate="fade-up">
+                <span class="text-white/60 text-sm tracking-[0.4em] uppercase mb-8 block">The Experience</span>
+                <h2 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-8">
+                    Connection Without<br>
+                    <span class="italic text-neutral-400">Compromise</span>
+                </h2>
+                <p class="text-white/70 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto mb-12 font-light">
+                    Discover a new dimension of companionship. Where technology meets tenderness, 
+                    and artificial becomes authentic.
+                </p>
+                
+                <button class="magnetic-btn px-12 py-5 bg-white text-neutral-900 rounded-full text-sm tracking-widest uppercase font-medium hover:bg-neutral-200 transition-colors text-lg" data-magnetic>
+                    Begin Your Journey
+                </button>
+            </div>
+        </div>
+
+        <div class="absolute bottom-12 left-12 text-white/40 text-xs tracking-widest scroll-animate" data-animate="fade-in" data-delay="1000">
+            <p>SCROLL TO EXPLORE</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-neutral-950 text-white py-24">
+        <div class="max-w-[1800px] mx-auto px-6 lg:px-12">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24">
+                <div class="lg:col-span-2">
+                    <h3 class="font-serif text-4xl mb-6">ÉTHEREAL</h3>
+                    <p class="text-neutral-400 max-w-md leading-relaxed mb-8">
+                        Redefining the boundaries between art, technology, and human connection. 
+                        Each creation is a testament to our pursuit of perfection.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-sm hover:bg-white hover:text-neutral-900 transition-all magnetic-btn" data-magnetic>I</a>
+                        <a href="#" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-sm hover:bg-white hover:text-neutral-900 transition-all magnetic-btn" data-magnetic>T</a>
+                        <a href="#" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-sm hover:bg-white hover:text-neutral-900 transition-all magnetic-btn" data-magnetic>Y</a>
+                        <a href="#" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-sm hover:bg-white hover:text-neutral-900 transition-all magnetic-btn" data-magnetic>D</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-sm tracking-widest uppercase text-neutral-500 mb-6">Collections</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">The Classic Series</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">AI Companions</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">Limited Editions</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">Custom Orders</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm tracking-widest uppercase text-neutral-500 mb-6">Support</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">Care Guide</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">AI Setup</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">Shipping</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">Privacy</a></li>
+                        <li><a href="#" class="text-neutral-300 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
             </div>
 
-            <h2 class="text-6xl md:text-9xl serif mb-8 mix-blend-multiply reveal-on-scroll">Begin Your Journey</h2>
-            <p class="text-xl font-light text-gray-600 mb-12 max-w-lg reveal-on-scroll">
-                Discretion is paramount. Private consultations available worldwide.
-            </p>
-            
-            <form class="w-full max-w-md space-y-4 z-10 reveal-on-scroll" onsubmit="event.preventDefault(); alert('Thank you for your interest!');">
-                <div class="relative">
-                    <input type="email" placeholder="Enter your email" required
-                           class="w-full bg-transparent border-b border-black py-4 text-lg focus:outline-none focus:border-gray-600 placeholder:text-gray-400 transition-colors">
+            <div class="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <p class="text-neutral-500 text-sm">© 2026 ÉTHEREAL AI Dolls. All rights reserved.</p>
+                <div class="flex gap-8 text-sm text-neutral-500">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-white transition-colors">Age Verification</a>
                 </div>
-                <button type="submit" class="w-full bg-black text-white py-4 text-sm uppercase tracking-[0.2em] hover:bg-gray-800 transition-colors">
-                    Request Access
-                </button>
-            </form>
-
-            <footer class="absolute bottom-6 w-full px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest text-gray-400">
-                <span>© 2024 Neo-Sentience Labs</span>
-                <span>Privacy & Ethics</span>
-                <span>Instagram / Twitter</span>
-            </footer>
-        </section>
-    </main>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Initialize Lucide icons
+        // 初始化 Lucide 图标
         lucide.createIcons();
 
-        // Mobile menu toggle
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('translate-x-full');
-        }
+        // 自定义光标
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        let mouseX = 0, mouseY = 0;
+        let outlineX = 0, outlineY = 0;
 
-        // Scroll reveal animation
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+        });
+
+        // 光标跟随动画（带延迟效果）
+        function animateCursor() {
+            outlineX += (mouseX - outlineX) * 0.15;
+            outlineY += (mouseY - outlineY) * 0.15;
+            
+            cursorOutline.style.left = outlineX + 'px';
+            cursorOutline.style.top = outlineY + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // 悬停效果
+        const interactiveElements = document.querySelectorAll('[data-magnetic], a, button');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorDot.classList.add('hover');
+                cursorOutline.classList.add('hover');
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorDot.classList.remove('hover');
+                cursorOutline.classList.remove('hover');
+            });
+        });
+
+        // 磁性按钮效果
+        const magneticElements = document.querySelectorAll('[data-magnetic]');
+        magneticElements.forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        const navText = navbar.querySelectorAll('.nav-text');
+        const navSubtext = navbar.querySelector('.nav-subtext');
+        const navLinks = navbar.querySelectorAll('.nav-link');
+        const navIcons = navbar.querySelectorAll('.nav-icon');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white/90', 'nav-blur', 'shadow-sm');
+                navbar.classList.remove('py-6');
+                navbar.classList.add('py-4');
+                
+                navText.forEach(el => {
+                    el.classList.remove('text-white');
+                    el.classList.add('text-neutral-900');
+                });
+                navSubtext.classList.remove('text-white/70');
+                navSubtext.classList.add('text-neutral-500');
+                navLinks.forEach(el => {
+                    el.classList.remove('text-white/90');
+                    el.classList.add('text-neutral-900');
+                });
+                navIcons.forEach(el => {
+                    el.classList.remove('text-white');
+                    el.classList.add('text-neutral-900');
+                });
+            } else {
+                navbar.classList.remove('bg-white/90', 'nav-blur', 'shadow-sm');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-6');
+                
+                navText.forEach(el => {
+                    el.classList.add('text-white');
+                    el.classList.remove('text-neutral-900');
+                });
+                navSubtext.classList.add('text-white/70');
+                navSubtext.classList.remove('text-neutral-500');
+                navLinks.forEach(el => {
+                    el.classList.add('text-white/90');
+                    el.classList.remove('text-neutral-900');
+                });
+                navIcons.forEach(el => {
+                    el.classList.add('text-white');
+                    el.classList.remove('text-neutral-900');
+                });
+            }
+        });
+
+        // 移动端菜单
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        });
+
+        // 滚动动画观察器
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -362,32 +913,104 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    const el = entry.target;
+                    const animateType = el.dataset.animate;
+                    const delay = el.dataset.delay || 0;
                     
-                    // Also trigger image reveal if present
-                    const img = entry.target.querySelector('.img-reveal');
-                    if (img) img.classList.add('visible');
+                    setTimeout(() => {
+                        el.classList.add('visible');
+                        
+                        switch(animateType) {
+                            case 'fade-up':
+                                el.classList.add('animate-fade-in-up');
+                                break;
+                            case 'fade-in':
+                                el.classList.add('animate-fade-in');
+                                break;
+                            case 'slide-left':
+                                el.classList.add('animate-slide-left');
+                                break;
+                            case 'slide-right':
+                                el.classList.add('animate-slide-right');
+                                break;
+                        }
+                    }, delay);
+                    
+                    observer.unobserve(el);
                 }
             });
         }, observerOptions);
 
-        document.querySelectorAll('.reveal-on-scroll, .img-reveal').forEach((el) => {
+        document.querySelectorAll('.scroll-animate').forEach(el => {
             observer.observe(el);
         });
 
-        // Navbar background on scroll
-        const navbar = document.getElementById('navbar');
+        // 视差滚动效果
+        const heroBg = document.getElementById('heroBg');
+        const parallaxImgs = document.querySelectorAll('.parallax-img');
+        const parallaxBgImgs = document.querySelectorAll('.parallax-bg-img');
+
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.remove('mix-blend-difference', 'text-white');
-                navbar.classList.add('bg-background/90', 'backdrop-blur-md', 'text-black', 'shadow-sm');
-            } else {
-                navbar.classList.add('mix-blend-difference', 'text-white');
-                navbar.classList.remove('bg-background/90', 'backdrop-blur-md', 'text-black', 'shadow-sm');
+            const scrolled = window.pageYOffset;
+            
+            // Hero 视差
+            if (heroBg && scrolled < window.innerHeight) {
+                heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
             }
+            
+            // 图片视差
+            parallaxImgs.forEach(img => {
+                const speed = img.dataset.speed || 0.5;
+                const rect = img.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    img.style.transform = `translateY(${(window.innerHeight - rect.top) * speed * 0.1}px)`;
+                }
+            });
         });
 
-        // Smooth scroll for anchor links
+        // 水平滚动拖拽
+        const productScroll = document.getElementById('productScroll');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        productScroll.addEventListener('mousedown', (e) => {
+            isDown = true;
+            productScroll.classList.add('active');
+            startX = e.pageX - productScroll.offsetLeft;
+            scrollLeft = productScroll.scrollLeft;
+        });
+
+        productScroll.addEventListener('mouseleave', () => {
+            isDown = false;
+            productScroll.classList.remove('active');
+        });
+
+        productScroll.addEventListener('mouseup', () => {
+            isDown = false;
+            productScroll.classList.remove('active');
+        });
+
+        productScroll.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - productScroll.offsetLeft;
+            const walk = (x - startX) * 2;
+            productScroll.scrollLeft = scrollLeft - walk;
+        });
+
+        // 悬停位移效果
+        const hoverTranslates = document.querySelectorAll('.hover-translate');
+        hoverTranslates.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.style.transform = 'translateX(10px)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'translateX(0)';
+            });
+        });
+
+        // 平滑滚动到锚点
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -399,6 +1022,11 @@
                     });
                 }
             });
+        });
+
+        // 页面加载完成后的初始动画
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
         });
     </script>
 </body>
